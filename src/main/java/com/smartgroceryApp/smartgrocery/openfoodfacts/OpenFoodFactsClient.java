@@ -17,6 +17,7 @@ public class OpenFoodFactsClient {
     @Qualifier("openFoodFactsRestClient")
     private final RestClient restClient;
 
+//   searching the products accepts product to search about, page and size
     public SearchResponse searchProducts(String query, int page, int size) {
         log.debug("searching open food facts external api");
         try {
@@ -37,7 +38,7 @@ public class OpenFoodFactsClient {
             throw new BusinessException("failed to search products");
         }
     }
-
+//    get product details by code
     public ProductDetailsResponseDto getProductDetails(String code) {
         log.debug("fetching product details");
         try {
