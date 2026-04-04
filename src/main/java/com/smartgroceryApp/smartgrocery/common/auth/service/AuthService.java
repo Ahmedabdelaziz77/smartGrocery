@@ -3,11 +3,13 @@ package com.smartgroceryApp.smartgrocery.common.auth.service;
 import com.smartgroceryApp.smartgrocery.common.auth.dto.AuthUserResponse;
 import com.smartgroceryApp.smartgrocery.common.auth.dto.LoginUserRequest;
 import com.smartgroceryApp.smartgrocery.common.auth.dto.SignupUserRequest;
+import com.smartgroceryApp.smartgrocery.common.auth.dto.UserRefreshTokenRequest;
 import com.smartgroceryApp.smartgrocery.common.enums.Role;
 import com.smartgroceryApp.smartgrocery.common.exception.DuplicationException;
 import com.smartgroceryApp.smartgrocery.common.exception.UnauthorizedException;
 import com.smartgroceryApp.smartgrocery.common.util.CurrentUserService;
 import com.smartgroceryApp.smartgrocery.security.jwt.JwtService;
+import com.smartgroceryApp.smartgrocery.user.entity.RefreshToken;
 import com.smartgroceryApp.smartgrocery.user.entity.User;
 import com.smartgroceryApp.smartgrocery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +92,6 @@ public class AuthService {
                 user.getId(),
                 user.getEmail(),
                 user.getRole().name());
-
         String refreshTokenValue = jwtService.generateRefreshToken(
                 user.getId(),
                 user.getEmail());
@@ -106,5 +107,54 @@ public class AuthService {
                 user.getRole().name(),
                 accessToken,
                 refreshTokenValue);
+    }
+
+    public AuthUserResponse refreshToken(UserRefreshTokenRequest request) {
+        RefreshToken storedToken = refreshTokenService.getValidToken(request.refreshToken);
+
+        String tokenType = jwtService.extractTokenType(storedToken.getToken());
+
+        if (!"refresh".equals(tokenType)) {
+            throw new UnauthorizedException("invalid token");
+        }
+
+        if (jwtService.isTokenExpired(storedToken.getToken())) {
+
+            refreshTokenService.revokeToken(storedToken);
+            throw new UnauthorizedException("refresh token expired");
+        }
+
+        User user = storedToken.getUser();
+        if (!user.isEnabled()) {
+            throw new UnauthorizedException("user account is disabled ):");
+        }
+
+        refreshTokenService.revokeToken(storedToken);
+        String newAccessToken = jwtService.generateAccessToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name());
+        String newRefreshToken = jwtService.generateRefreshToken(
+                user.getId(),
+                user.getEmail());
+
+        refreshTokenService.createRefreshToken(user, newRefreshToken);
+
+        log.debug("token refreshed for user with email {}", user.getEmail());
+
+        return new AuthUserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name(),
+                newAccessToken,
+                newRefreshToken);
+
+    }
+
+    public void logout() {
+        
+        User user = currentUserService.getCurrentUser();
+        refreshTokenService.revokeAllUserTokens(user);
     }
 }
