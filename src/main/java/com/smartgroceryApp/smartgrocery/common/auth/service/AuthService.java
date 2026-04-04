@@ -153,7 +153,7 @@ public class AuthService {
     }
 
     public void logout() {
-        
+
         User user = currentUserService.getCurrentUser();
         refreshTokenService.revokeAllUserTokens(user);
     }
