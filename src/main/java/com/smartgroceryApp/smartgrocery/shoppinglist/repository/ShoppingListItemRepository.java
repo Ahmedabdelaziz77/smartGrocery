@@ -12,7 +12,7 @@ public interface ShoppingListItemRepository extends JpaRepository<ShoppingListIt
     List<ShoppingListItem> findByShoppingList(ShoppingList shoppingList);
 
     Optional<ShoppingListItem> findByShoppingListAndProduct(ShoppingList shoppingList, ApprovedProduct product);
-    
+
     Optional<ShoppingListItem> findByIdAndShoppingList(Long id, ShoppingList shoppingList);
 
     void deleteByShoppingList(ShoppingList shoppingList);
