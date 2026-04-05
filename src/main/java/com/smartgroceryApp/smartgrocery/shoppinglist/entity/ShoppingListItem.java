@@ -23,7 +23,7 @@ public class ShoppingListItem extends ParentEntity {
     @JoinColumn(name = "shopping_list_id", nullable = false)
     private ShoppingList shoppingList;
 
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private ApprovedProduct product;
