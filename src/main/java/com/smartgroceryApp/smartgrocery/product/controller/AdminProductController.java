@@ -42,9 +42,11 @@ public class AdminProductController {
 
     @GetMapping("/approved")
     public ResponseEntity<PageResponse<ApprovedProductResponseDto>> getApprovedProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page index must be at least 0") int page,
             @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size) {
-        return ResponseEntity.ok(approvedProductService.getAllApprovedProducts(page, size));
+        return ResponseEntity.ok(approvedProductService.getAllApprovedProducts(name, category, page, size));
     }
 
     @PostMapping("/import")

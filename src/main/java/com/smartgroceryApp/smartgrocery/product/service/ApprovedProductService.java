@@ -87,9 +87,9 @@ public class ApprovedProductService {
         return res;
     }
 
-    public PageResponse<ApprovedProductResponseDto> getAllApprovedProducts(int page, int size) {
+    public PageResponse<ApprovedProductResponseDto> getAllApprovedProducts(String name, String category, int page, int size) {
         Pageable pageable = PaginationUtils.createPageRequest(page, size, "createdAt");
-        Page<ApprovedProduct> productPage = approvedProductRepository.findAllByActiveTrue(pageable);
+        Page<ApprovedProduct> productPage = approvedProductRepository.searchProducts(name, category, pageable);
         return PaginationUtils.toPageResponse(productPage, approvedProductMapper::toResponse);
     }
 
