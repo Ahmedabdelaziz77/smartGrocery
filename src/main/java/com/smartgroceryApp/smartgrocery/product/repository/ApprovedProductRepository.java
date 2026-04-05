@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface ApprovedProductRepository extends JpaRepository<ApprovedProduct, Long> {
     boolean existsByExternalIdAndExternalSource(String externalId, String externalSource);
+    Optional<ApprovedProduct> findByExternalIdAndExternalSource(String externalId, String externalSource);
     Optional<ApprovedProduct> findByIdAndActiveTrue(Long id);
     Page<ApprovedProduct> findAllByActiveTrue(Pageable pageable);
 

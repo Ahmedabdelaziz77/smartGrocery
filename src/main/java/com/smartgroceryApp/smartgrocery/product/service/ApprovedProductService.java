@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,23 +35,22 @@ public class ApprovedProductService {
 
     private final CurrentUserService currentUserService;
 
-
     public ApprovedProductResponseDto importSingle(ImportProductRequestDto request) {
 
-        boolean exists = approvedProductRepository.existsByExternalIdAndExternalSource(
+        Optional<ApprovedProduct> existing = approvedProductRepository.findByExternalIdAndExternalSource(
                 request.getExternalId(),
-                "OPEN_FOOD_FACTS"
-        );
+                "OPEN_FOOD_FACTS");
 
-        if (exists) {
+        if (existing.isPresent() && existing.get().isActive()) {
             throw new DuplicationException("product already imported !!");
         }
 
-        ExternalProductResDto externalProd =
-                openFoodFactsService.getProductDetails(request.getExternalId());
+        ExternalProductResDto externalProd = openFoodFactsService.getProductDetails(request.getExternalId());
 
         User admin = currentUserService.getCurrentUser();
-        ApprovedProduct approvedProduct = new ApprovedProduct();
+
+        // reactivate the soft deleted product or create a new one
+        ApprovedProduct approvedProduct = existing.orElseGet(ApprovedProduct::new);
 
         approvedProduct.setExternalId(externalProd.getExternalId());
         approvedProduct.setExternalSource("OPEN_FOOD_FACTS");
@@ -70,7 +69,8 @@ public class ApprovedProductService {
 
         ApprovedProduct saved = approvedProductRepository.save(approvedProduct);
 
-        log.info("imported product with id={}, externalId={}, name='{}'", saved.getId(), saved.getExternalId(), saved.getName());
+        log.info("imported product with id={}, externalId={}, name='{}'", saved.getId(), saved.getExternalId(),
+                saved.getName());
 
         return approvedProductMapper.toResponse(saved);
     }
