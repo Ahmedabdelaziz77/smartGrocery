@@ -8,11 +8,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ApprovedProductMapper {
-    @Mapping(target = "externalSource", expression = "java(product.getExternalSource().name())")
+    @Mapping(target = "externalSource", expression = "java(product.getExternalSource())")
     @Mapping(target = "active", source = "active")
     ApprovedProductResponseDto toResponse(ApprovedProduct product);
-
-
 
     ProductDetailsResponseDto toDetailsResponse(ApprovedProduct product);
 }

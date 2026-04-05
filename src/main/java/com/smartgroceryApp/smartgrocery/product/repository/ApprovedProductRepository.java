@@ -36,4 +36,14 @@ public interface ApprovedProductRepository extends JpaRepository<ApprovedProduct
     ORDER BY p.category
     """)
     List<String> findDistinctCategories();
+
+    long countByActiveTrue();
+
+    @Query("SELECT COUNT(DISTINCT p.category) FROM ApprovedProduct p WHERE p.active = true AND p.category IS NOT NULL")
+    long countDistinctCategories();
+
+
+    List<ApprovedProduct> findTop5ByActiveTrueOrderByCreatedAtDesc();
+    @Query("SELECT p.category, COUNT(p) FROM ApprovedProduct p WHERE p.active = true AND p.category IS NOT NULL GROUP BY p.category ORDER BY COUNT(p) DESC")
+    List<Object[]> countByCategory();
 }
