@@ -95,13 +95,16 @@ public class GlobalExceptionHandler {
             HttpServletRequest request,
             Map<String, String> validationErrors) {
 
-        Map<String, Object> errorResponse = Map.of(
-                "timestamp", Instant.now(),
-                "status", status.value(),
-                "error", message,
-                "uri", request.getRequestURI(),
-                "errors", validationErrors
-        );
+        Map<String, Object> errorResponse = new HashMap<>();
+
+        errorResponse.put("timestamp", Instant.now());
+        errorResponse.put("status", status.value());
+        errorResponse.put("error", message);
+        errorResponse.put("uri", request.getRequestURI());
+
+        if (validationErrors != null && !validationErrors.isEmpty()) {
+            errorResponse.put("errors", validationErrors);
+        }
 
         return ResponseEntity.status(status).body(errorResponse);
     }

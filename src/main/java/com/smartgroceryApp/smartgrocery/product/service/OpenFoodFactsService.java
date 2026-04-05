@@ -46,13 +46,13 @@ public class OpenFoodFactsService {
         NutrimentsDto nutriments = product.getNutriments();
 
         return new ExternalProductResDto(
-                product.getCode().trim(),
+                product.getCode() != null ? product.getCode().trim() : null,
                 "OPEN_FOOD_FACTS",
                 product.getProductName() != null ? product.getProductName().trim() : "Unknown",
-                product.getBrands().trim(),
+                product.getBrands() != null ? product.getBrands().trim() : null,
                 firstCategory(product.getCategories()),
-                product.getGenericName().trim(),
-                product.getImageUrl().trim(),
+                product.getGenericName() != null ? product.getGenericName().trim() : null,
+                product.getImageUrl() != null ? product.getImageUrl().trim() : null,
                 nutriments != null ? nutriments.getEnergyKcal100g() : null,
                 nutriments != null ? nutriments.getProteins100g() : null,
                 nutriments != null ? nutriments.getCarbohydrates100g() : null,
@@ -60,11 +60,13 @@ public class OpenFoodFactsService {
         );
     }
 
-
     private String firstCategory(String categories) {
+        if (categories == null || categories.isBlank()) {
+            return null;
+        }
 
         String[] parts = categories.split(",");
-        if (parts.length == 0) {
+        if (parts.length == 0 || parts[0].isBlank()) {
             return null;
         }
 
