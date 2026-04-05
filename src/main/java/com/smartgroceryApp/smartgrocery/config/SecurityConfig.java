@@ -30,9 +30,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
                         // i maked the logout route to be authenticated
@@ -43,8 +41,8 @@ public class SecurityConfig {
                                 "/error",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**"
-                        ).permitAll()
+                                "/v3/api-docs/**")
+                        .permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
@@ -52,15 +50,15 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/shopping-list/**").hasRole("USER")
 
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // TODO: maybe switch to a custom provider later if we need oauth or see why it's deprecated
+    // TODO: maybe switch to a custom provider later if we need oauth or see why
+    // it's deprecated
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -71,8 +69,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration
-    ) throws Exception {
+            AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 

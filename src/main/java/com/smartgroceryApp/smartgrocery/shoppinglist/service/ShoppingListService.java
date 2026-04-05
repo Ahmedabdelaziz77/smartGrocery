@@ -37,6 +37,7 @@ public class ShoppingListService {
 
 
 
+    @Transactional(readOnly = true)
     public ShoppingListResponse getCurrentUserShoppingList() {
         ShoppingList shoppingList = getOrCreateShoppingList(currentUserService.getCurrentUser());
         List<ShoppingListItem> items = shoppingListItemRepository.findByShoppingList(shoppingList);
@@ -44,6 +45,7 @@ public class ShoppingListService {
     }
 
 
+    @Transactional
     public ShoppingListResponse addItem(AddShoppingListItemRequestDto req) {
         User user = currentUserService.getCurrentUser();
         ShoppingList shoppingList = getOrCreateShoppingList(user);
@@ -69,6 +71,7 @@ public class ShoppingListService {
     }
 
 
+    @Transactional
     public ShoppingListResponse updateItem(Long itemId, UpdateShoppingListItemRequestDto req) {
 
         User user = currentUserService.getCurrentUser();
