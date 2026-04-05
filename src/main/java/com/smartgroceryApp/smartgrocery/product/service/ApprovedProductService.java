@@ -35,6 +35,7 @@ public class ApprovedProductService {
 
     private final CurrentUserService currentUserService;
 
+    @Transactional
     public ApprovedProductResponseDto importSingle(ImportProductRequestDto request) {
 
         Optional<ApprovedProduct> existing = approvedProductRepository.findByExternalIdAndExternalSource(
@@ -75,6 +76,7 @@ public class ApprovedProductService {
         return approvedProductMapper.toResponse(saved);
     }
 
+    @Transactional
     public List<ApprovedProductResponseDto> importBulk(BulkImportRequestDto request) {
         List<ApprovedProductResponseDto> res = new ArrayList<>();
 
